@@ -56,26 +56,23 @@ function getRadius(designId){
 function dragstarted(d) {
     d3.select(this).style("cursor", "all-scroll");
     d3.select(this).raise().classed("active", true);
-  }
+}
   
-  function dragged(d) {
+function dragged(d) {
     if(getShape(d.designId)==='circle'){
         d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
     }else if(getShape(d.designId)==='square' || 'triangle'){
         d3.select(this).attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
     }
-  }
+}
   
-  function dragended(d) {
+function dragended(d) {
     d3.select(this).style("cursor", "default"); 
     d3.select(this).classed("active", false);
-  }
+}
   
 // DATA HANDLE
 function myRender(){     
-    
-
-
     var nodes = d3.select("#container-div").selectAll("svg").data(globalProps.dataModel,(d)=>{
         return d.id;
     });
@@ -180,7 +177,7 @@ export default class D3 extends React.Component{
 
     constructor(props){
         super(props);
-        globalProps = props;
+        globalProps = props.myProps;
     }
 
     render(){
@@ -200,7 +197,7 @@ export default class D3 extends React.Component{
     }
 
     componentWillReceiveProps(nextProps) {
-        globalProps = nextProps;
+        globalProps = nextProps.myProps;
     }
 
     shouldComponentUpdate(){

@@ -77,7 +77,7 @@ export default class MainApp extends React.Component{
     render(){
         return(
             <div style={{ height: '800px', width:'1600px' }}>
-                <D3Advanced props={myProps}/>
+                <D3Advanced myProps={myProps}/>
             </div>
         );
     }
