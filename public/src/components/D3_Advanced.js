@@ -3,19 +3,20 @@ import * as d3 from "d3";
 
 var globalProps;
 // globalProps = {dataModel,relationshipsModel,design,counter}
+var dataUpdated;
 
 function getColor(designId){
-    let res = undefined;
+    let res = null;
     globalProps.design.map((item)=>{
         if(item.id == designId){
             res = item.style.color;
-        }         
+        }
     })
     return res;
 }
 
 function getShape(designId){
-    let res = undefined;
+    let res = null;
     globalProps.design.map((item)=>{
         if(item.id == designId){
             res = item.style.shape;
@@ -25,7 +26,7 @@ function getShape(designId){
 }
 
 function getCoordinates(designId){
-    let res = undefined;
+    let res = null;
     globalProps.design.map((item)=>{
         if(item.id == designId){
             res = {x:item.style.x0 , y:item.style.y0 };
@@ -44,7 +45,7 @@ function setCoordinates(designId,x0,y0){
 }
 
 function getRadius(designId){
-    let res = undefined;
+    let res = null;
     globalProps.design.map((item)=>{
         if(item.id == designId){
             res = item.style.radius;
@@ -95,7 +96,7 @@ function myRender(){
             .attr("id",function(d){
                 return d.id;
             })
-            .attr("class","node")      
+            .attr("class","node")
             .attr("cx", (d)=>{ return getShape(d.designId) ==='circle' ? getCoordinates(d.designId).x : null })
             .attr("cy", (d)=>{ return getShape(d.designId)==='circle' ? getCoordinates(d.designId).y : null })
             .attr("r", (d)=>{ return getShape(d.designId)==='circle' ? getRadius(d.designId) : null })
@@ -135,12 +136,14 @@ function myRender(){
         (designRemoveIndex >= 0) && globalProps.design.splice(designRemoveIndex, 1); 
 
         // remove the proper dom elements :
-        myRender();        
+        myRender();
 
     })
 
     d3.select("#container-div").on("click",containerClicked );
 
+    // update data back to parent-element (in react)
+    dataUpdated(globalProps);
 }
 
 // LISTENERS
@@ -151,7 +154,7 @@ function containerClicked(){
     // let newNodeId = numOfNodes + 1;
     let newNodeId = globalProps.counter + 1;
     globalProps.counter = globalProps.counter + 1;
-    
+
     // update data : 
     globalProps.design.push({
         id:newNodeId,
@@ -177,7 +180,8 @@ export default class D3 extends React.Component{
 
     constructor(props){
         super(props);
-        globalProps = props.myProps;
+        this.myProps = props.myProps;
+        dataUpdated = props.dataUpdated;
     }
 
     render(){
@@ -187,7 +191,7 @@ export default class D3 extends React.Component{
     }
 
     componentDidMount(){
-        // counter = 3;
+        globalProps = this.myProps;
         myRender();  
     }
 
