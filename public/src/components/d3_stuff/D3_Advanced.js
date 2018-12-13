@@ -2,8 +2,8 @@ import React from 'react';
 import * as d3 from "d3";
 
 var globalProps;
-// globalProps = {dataModel,relationshipsModel,design,counter}
 var dataUpdated;
+var nodeClicked;
 
 function getColor(designId){
     let res = null;
@@ -20,7 +20,7 @@ function getShape(designId){
     globalProps.design.map((item)=>{
         if(item.id == designId){
             res = item.style.shape;
-        }         
+        }
     })
     return res;
 }
@@ -40,7 +40,7 @@ function setCoordinates(designId,x0,y0){
         if(item.id == designId){
             item.x0 = x0;
             item.y0 = y0;
-        }         
+        }
     })
 }
 
@@ -73,7 +73,7 @@ function dragended(d) {
 }
   
 // DATA HANDLE
-function myRender(){     
+function myRender(){
     var nodes = d3.select("#container-div").selectAll("svg").data(globalProps.dataModel,(d)=>{
         return d.id;
     });
@@ -90,9 +90,6 @@ function myRender(){
             return document.createElementNS(d3.namespaces.svg,res);
         })
         .merge(nodes)
-            // .text(function(d){
-            //     return d.name; 
-            // })
             .attr("id",function(d){
                 return d.id;
             })
@@ -107,7 +104,6 @@ function myRender(){
             .attr("height", (d)=>{ return getShape(d.designId)==='square' || 'triangle' ? 100 : null })
             .attr("fill", (d)=>{return getColor(d.designId)} );      
 
-    
     d3.select("#container-div").selectAll(".node").data(globalProps.dataModel,(d)=>{
             return d.id;
     }).exit().remove();
@@ -137,10 +133,11 @@ function myRender(){
 
         // remove the proper dom elements :
         myRender();
-
-    })
-
+    });
     d3.select("#container-div").on("click",containerClicked );
+    d3.selectAll(".node").on("click", function(d,i){
+        nodeClicked(d,i);
+    });
 
     // update data back to parent-element (in react)
     dataUpdated(globalProps);
@@ -148,7 +145,6 @@ function myRender(){
 
 // LISTENERS
 function containerClicked(){
-    // console.log('clicked on : (' + d3.mouse(this)[0]+','+d3.mouse(this)[1]+')');
     let inputCoordinates = d3.mouse(this);
     let numOfNodes = d3.selectAll(".node").nodes().length;
     // let newNodeId = numOfNodes + 1;
@@ -182,6 +178,7 @@ export default class D3 extends React.Component{
         super(props);
         this.myProps = props.myProps;
         dataUpdated = props.dataUpdated;
+        nodeClicked = props.nodeClicked;
     }
 
     render(){
@@ -191,7 +188,7 @@ export default class D3 extends React.Component{
     }
 
     componentDidMount(){
-        globalProps = this.myProps;
+        globalProps = JSON.parse(JSON.stringify( this.myProps ));
         myRender();  
     }
 
@@ -201,7 +198,23 @@ export default class D3 extends React.Component{
     }
 
     componentWillReceiveProps(nextProps) {
-        globalProps = nextProps.myProps;
+        // console.log('new props');
+
+        globalProps = JSON.parse(JSON.stringify( nextProps.myProps ));
+        let newNode = nextProps.myProps.updatedNode;
+        if(newNode){
+            // newNode is not undefined , update the dataModel 
+            // TO-DO : also update the design (in future -- set proper the parent stuff)
+            globalProps.dataModel.map((item)=>{
+                if(item.id == newNode.id){
+                    item.name = newNode.name;
+                    // no need to update design id, should be the same (if no error exists)
+                }
+            });
+        }
+        // new data received, update the DOM properly, 
+        // by calling myRender()        
+        myRender();
     }
 
     shouldComponentUpdate(){
