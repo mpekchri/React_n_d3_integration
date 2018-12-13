@@ -74,7 +74,7 @@ function dragended(d) {
   
 // DATA HANDLE
 function myRender(){
-    var nodes = d3.select("#container-div").selectAll("svg").data(globalProps.dataModel,(d)=>{
+    var nodes = d3.select("#container-div").selectAll("svg").select("g").data(globalProps.dataModel,(d)=>{
         return d.id;
     });
     
@@ -134,7 +134,7 @@ function myRender(){
         // remove the proper dom elements :
         myRender();
     });
-    d3.select("#container-div").on("click",containerClicked );
+    d3.select("svg").on("click",containerClicked );
     d3.selectAll(".node").on("click", function(d,i){
         nodeClicked(d,i);
     });
@@ -146,7 +146,8 @@ function myRender(){
 // LISTENERS
 function containerClicked(){
     let inputCoordinates = d3.mouse(this);
-    let numOfNodes = d3.selectAll(".node").nodes().length;
+    console.log(inputCoordinates)
+    // let numOfNodes = d3.selectAll(".node").nodes().length;
     // let newNodeId = numOfNodes + 1;
     let newNodeId = globalProps.counter + 1;
     globalProps.counter = globalProps.counter + 1;
@@ -183,7 +184,10 @@ export default class D3 extends React.Component{
 
     render(){
         return(
-            <svg id="container-div" style={{ height: '100%', width:'100%',border:'dashed' }} ref="myRef" />
+            <svg style={{ height: '100%', width:'100%',border:'dashed' }} ref="myRef" >
+                <g id="container-div" >
+                </g>
+            </svg>
         );
     }
 
