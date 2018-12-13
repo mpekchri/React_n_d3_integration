@@ -148,7 +148,7 @@ function myRender(){
 // LISTENERS
 function containerClicked(){
     let inputCoordinates = d3.mouse(this);
-    console.log(inputCoordinates)
+    
     // let numOfNodes = d3.selectAll(".node").nodes().length;
     // let newNodeId = numOfNodes + 1;
     let newNodeId = globalProps.counter + 1;
@@ -187,17 +187,17 @@ export default class D3 extends React.Component{
     render(){
         return(
             <svg style={{ height: '100%', width:'100%',border:'dashed' }} ref="myRef" >
-                <g id="container-div" >
-                </g>
                 <g id="lines-group">
                 </g>
+                <g id="container-div" >
+                </g>                
             </svg>
         );
     }
 
     componentDidMount(){
         globalProps = JSON.parse(JSON.stringify( this.myProps ));
-        myRender();  
+        myRender();
     }
 
     componentWillUnmount(){

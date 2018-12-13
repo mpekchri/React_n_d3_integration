@@ -2,6 +2,7 @@ import React from 'react';
 // import Graph from './Graph';
 // import D3 from './D3';
 import D3Advanced from './d3_stuff/D3_Advanced';
+import Trial from './d3_stuff/Trials';
 
 export default class MainApp extends React.Component{
     constructor(props){
@@ -87,27 +88,32 @@ export default class MainApp extends React.Component{
     }
 
     render(){
+        // return(
+        //     <div style={{ height: '800px', width:'1600px' }}>
+        //         <D3Advanced myProps={this.myProps} 
+        //         dataUpdated={this.dataBind}
+        //         nodeClicked={this.nodeClicked}
+        //     />
+        //         <div style={{ height: '300px', width:'1600px', border:'dashed',visibility: this.state.visible ? 'visible':'hidden' }}>
+        //             { 
+        //             this.state.visible ? 
+        //                 <form onSubmit={this.handleSubmit}>
+        //                 <label>
+        //                     Node name:<input type="text" value={ this.state.selectedNode.newName } onChange={this.changeNodeName}/>
+        //                     </label>                            
+        //                     <button onClick={this.resetNodeName}>Reset</button>
+
+        //                     <hr/>
+        //                     <input type="submit" value="Submit and Close" />
+        //                 </form>
+        //                 : undefined
+        //             }
+        //         </div>  
+        //     </div>
+        // );
         return(
             <div style={{ height: '800px', width:'1600px' }}>
-                <D3Advanced myProps={this.myProps} 
-                dataUpdated={this.dataBind}
-                nodeClicked={this.nodeClicked}
-            />
-                <div style={{ height: '300px', width:'1600px', border:'dashed',visibility: this.state.visible ? 'visible':'hidden' }}>
-                    { 
-                    this.state.visible ? 
-                        <form onSubmit={this.handleSubmit}>
-                        <label>
-                            Node name:<input type="text" value={ this.state.selectedNode.newName } onChange={this.changeNodeName}/>
-                            </label>                            
-                            <button onClick={this.resetNodeName}>Reset</button>
-
-                            <hr/>
-                            <input type="submit" value="Submit and Close" />
-                        </form>
-                        : undefined
-                    }
-                </div>  
+                <Trial />
             </div>
         );
     }
