@@ -139,6 +139,8 @@ function myRender(){
         nodeClicked(d,i);
     });
 
+
+
     // update data back to parent-element (in react)
     dataUpdated(globalProps);
 }
@@ -186,6 +188,8 @@ export default class D3 extends React.Component{
         return(
             <svg style={{ height: '100%', width:'100%',border:'dashed' }} ref="myRef" >
                 <g id="container-div" >
+                </g>
+                <g id="lines-group">
                 </g>
             </svg>
         );
