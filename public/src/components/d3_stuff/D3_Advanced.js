@@ -54,14 +54,54 @@ function getRadius(designId){
     return res;
 }
 
+// ---- drag ----
+
 function dragstarted(d) {
     d3.select(this).style("cursor", "all-scroll");
     d3.select(this).raise().classed("active", true);
 }
   
 function dragged(d) {
+    var lineFunction = d3.line()
+                            .curve(d3.curveLinear)
+                            .x((d)=>{return d.x})
+                            .y((d)=>{return d.y});
+                            
     if(getShape(d.designId)==='circle'){
         d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+        // update design
+        globalProps.relationshipsModel.map((link)=>{
+            if(link.from == d.id){
+                setDesignRelations(link.designId, {x1:d.x , y1:d.y});
+            }else if(link.to == d.id){
+                setDesignRelations(link.designId, {x2:d.x , y2:d.y});
+            }
+        });
+
+        // Data updated , now update dom :        
+        let lineFunction = d3.line()
+                            .curve(d3.curveLinear)
+                            .x((d)=>{return d.x})
+                            .y((d)=>{return d.y});
+
+        let links = d3.select("#lines-group").selectAll("path").data(globalProps.designRelations,(d)=>{
+            return d.id;
+        });
+        
+        links.enter().append("path")
+                    .merge(links)
+                        .attr("d", (d,i)=>{
+                            return lineFunction( getLinePoints(d) );
+                        })
+                        .attr("stroke", "blue")
+                        .attr("stroke-width", 1)
+                        .attr("fill", "none")
+                        .attr("id",(d)=>{
+                            return "link-"+d.id;
+                        });
+        links.exit().remove();
+        // dom updated , job done
+
     }else if(getShape(d.designId)==='square' || 'triangle'){
         d3.select(this).attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
     }
@@ -72,8 +112,69 @@ function dragended(d) {
     d3.select(this).classed("active", false);
 }
 
+// ---- drag ----
+
 function getLinePoints(d){
-    return [{x:d.x1,y:d.y1},{x:d.x2,y:d.y2}];
+    // the commented code works if d is type of : relationshipsModel
+
+    // let points = globalProps.designRelations.map((designOfLink)=>{
+    //     let points = [];
+    //     if(d.designId == designOfLink.id){
+    //         points.push({x:designOfLink.x1,y:designOfLink.y1});
+    //         points.push({x:designOfLink.x2,y:designOfLink.y2});
+    //     }
+    //     return points;
+    // });
+    // return points[0];
+
+    // the bellow code works if d is type of : designRelations
+    return[
+        {x:d.x1, y:d.y1},
+        {x:d.x2, y:d.y2}
+    ];
+}
+
+function getNodeDesignId(nodeId){
+    let res = undefined;
+    globalProps.dataModel.map((node)=>{
+        if(node.id == nodeId){
+            res = node.designId;
+        }
+    });
+    return res;
+}
+
+function setDesignRelations(linkDesignId, setProperties){
+    globalProps.designRelations.map((linkDesign)=>{
+        if(linkDesign.id == linkDesignId){
+            setProperties.x1 ? linkDesign.x1 = setProperties.x1 : undefined;
+            setProperties.y1 ? linkDesign.y1 = setProperties.y1 : undefined;
+            setProperties.x2 ? linkDesign.x2 = setProperties.x2 : undefined;
+            setProperties.y2 ? linkDesign.y2 = setProperties.y2 : undefined;
+        }
+    });
+    
+}
+
+function updateDesignRelations(){
+    globalProps.relationshipsModel.map((link)=>{        
+        let designExists = false;
+        globalProps.designRelations.map((designLink)=>{
+            if(designLink.id == link.designId){
+                designExists = true;
+            }
+        });
+        if(designExists!=true){
+            // if the design of the link does not exist, create it :
+            globalProps.designRelations.push({
+                x1:getCoordinates( getNodeDesignId(link.from) ).x,
+                y1:getCoordinates( getNodeDesignId(link.from) ).y,
+                x2:getCoordinates( getNodeDesignId(link.to) ).x,
+                y2:getCoordinates( getNodeDesignId(link.to) ).y, 
+                id:link.designId
+            })
+        }
+    });
 }
   
 // DATA HANDLE
@@ -120,45 +221,34 @@ function myRender(){
         ));
     
     
-    
     // LINES START
-    // globalProps.designRelations
-    // globalProps.relationshipsModel
-    globalProps.relationshipsModel.map((link)=>{
-        let designExists = false;
-        globalProps.designRelations.map((designLink)=>{
-            if(designLink.id == link.designId){
-                designExists = true;
-            }
-        });
-        if(!designExists){
-            // if the design of the link does not exist, create it :
-            globalProps.linksCounter = globalProps.linksCounter + 1;
-            globalProps.designRelations.push({
-                x1:d3.select("#container-div").select("#"+link.from).attr("cx"),
-                y1:d3.select("#container-div").select("#"+link.from).attr("cy"),
-                x2:d3.select("#container-div").select("#"+link.to).attr("cx"),
-                y2:d3.select("#container-div").select("#"+link.to).attr("cy"), 
-                designId:globalProps.linksCounter
-            })
-        }
-    });
+
+    // update globalProps.designRelations
+    updateDesignRelations();
     // now globalProps.designRelations is updated,
     // we may bind it's data with d3
-    var links = d3.select("#lines-group").selectAll("svg").select("g").data(globalProps.designRelations,(d)=>{
-        return d.designId;
-    });
     var lineFunction = d3.line()
                             .curve(d3.curveLinear)
                             .x((d)=>{return d.x})
                             .y((d)=>{return d.y});
+
+    var links = d3.select("#lines-group").selectAll("path").data(globalProps.designRelations,(d)=>{
+        return d.id;
+    });
+    
     links.enter().append("path")
+                .merge(links)
                     .attr("d", (d,i)=>{
                         return lineFunction( getLinePoints(d) );
                     })
                     .attr("stroke", "blue")
                     .attr("stroke-width", 1)
-                    .attr("fill", "none");
+                    .attr("fill", "none")
+                    .attr("id",(d)=>{
+                        return "link-"+d.id;
+                    });
+
+    links.exit().remove();
 
     // var links = d3.select("#lines-group").selectAll("link").data(globalProps.relationshipsModel,(d)=>{
     //     return d.id;
@@ -269,6 +359,7 @@ export default class D3 extends React.Component{
 
     componentDidMount(){
         globalProps = JSON.parse(JSON.stringify( this.myProps ));
+
         myRender();
     }
 
@@ -278,7 +369,6 @@ export default class D3 extends React.Component{
     }
 
     componentWillReceiveProps(nextProps) {
-        // console.log('new props');
 
         globalProps = JSON.parse(JSON.stringify( nextProps.myProps ));
         let newNode = nextProps.myProps.updatedNode;
@@ -292,6 +382,7 @@ export default class D3 extends React.Component{
                 }
             });
         }
+        
         // new data received, update the DOM properly, 
         // by calling myRender()        
         myRender();

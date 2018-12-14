@@ -15,7 +15,7 @@ export default class MainApp extends React.Component{
 
         this.myProps = {
             counter : 3,
-            linksCounter: 1,
+            linksCounter: 0,
 
             dataModel:[
                 {
