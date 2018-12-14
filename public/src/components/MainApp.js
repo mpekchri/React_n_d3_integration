@@ -200,7 +200,7 @@ export default class MainApp extends React.Component{
                 }
             };
         })
-        console.log('node '+d.name + ' clicked');
+        // console.log('node '+d.name + ' clicked');
     }
 
 }

@@ -292,6 +292,20 @@ function myRender(){
         (removeIndex >= 0) && globalProps.dataModel.splice(removeIndex, 1); 
         (designRemoveIndex >= 0) && globalProps.design.splice(designRemoveIndex, 1); 
 
+        // now remove links to/from this node
+        let arrayOfIndexes = [];
+        globalProps.relationshipsModel.map((link,i)=>{
+            if(link.from == d.id || link.to == d.id){
+                globalProps.relationshipsModel
+                let index = globalProps.designRelations.map((item)=>{return item.id}).indexOf(link.designId);
+                (index >= 0) && globalProps.designRelations.splice(index, 1);
+                arrayOfIndexes.push(i);
+            }
+        });
+        arrayOfIndexes.map((indexToRemove)=>{
+            (indexToRemove >= 0) && globalProps.relationshipsModel.splice(indexToRemove, 1);
+        })
+
         // re-update dom & remove the proper dom elements :
         myRender();
     });
