@@ -71,6 +71,10 @@ function dragended(d) {
     d3.select(this).style("cursor", "default"); 
     d3.select(this).classed("active", false);
 }
+
+function getLinePoints(d){
+    return [{x:d.x1,y:d.y1},{x:d.x2,y:d.y2}];
+}
   
 // DATA HANDLE
 function myRender(){
@@ -114,6 +118,73 @@ function myRender(){
             .on("drag", dragged)
             .on("end", dragended
         ));
+    
+    
+    
+    // LINES START
+    // globalProps.designRelations
+    // globalProps.relationshipsModel
+    globalProps.relationshipsModel.map((link)=>{
+        let designExists = false;
+        globalProps.designRelations.map((designLink)=>{
+            if(designLink.id == link.designId){
+                designExists = true;
+            }
+        });
+        if(!designExists){
+            // if the design of the link does not exist, create it :
+            globalProps.linksCounter = globalProps.linksCounter + 1;
+            globalProps.designRelations.push({
+                x1:d3.select("#container-div").select("#"+link.from).attr("cx"),
+                y1:d3.select("#container-div").select("#"+link.from).attr("cy"),
+                x2:d3.select("#container-div").select("#"+link.to).attr("cx"),
+                y2:d3.select("#container-div").select("#"+link.to).attr("cy"), 
+                designId:globalProps.linksCounter
+            })
+        }
+    });
+    // now globalProps.designRelations is updated,
+    // we may bind it's data with d3
+    var links = d3.select("#lines-group").selectAll("svg").select("g").data(globalProps.designRelations,(d)=>{
+        return d.designId;
+    });
+    var lineFunction = d3.line()
+                            .curve(d3.curveLinear)
+                            .x((d)=>{return d.x})
+                            .y((d)=>{return d.y});
+    links.enter().append("path")
+                    .attr("d", (d,i)=>{
+                        return lineFunction( getLinePoints(d) );
+                    })
+                    .attr("stroke", "blue")
+                    .attr("stroke-width", 1)
+                    .attr("fill", "none");
+
+    // var links = d3.select("#lines-group").selectAll("link").data(globalProps.relationshipsModel,(d)=>{
+    //     return d.id;
+    // });
+
+    // links.enter()
+    //         .append("line")
+    //             .merge(links)
+    //                 .attr("class", "link")
+    //                 .attr("x1",(alink)=>{
+    //                     var sourceNode = globalProps.dataModel.filter(function(d, i) {
+    //                         return d.id == alink.from;
+    //                     })[0];
+    //                     d3.select(this).attr("y1", getCoordinates(sourceNode.designId).y);
+    //                     return getCoordinates(sourceNode.designId).x;
+    //                 })
+    //                 .attr("x2",(alink)=>{
+    //                     var targetNode = globalProps.dataModel.filter(function(d, i) {
+    //                         return d.id == alink.to;
+    //                     })[0];
+    //                     d3.select(this).attr("y2", getCoordinates(targetNode.designId).y);
+    //                     return getCoordinates(targetNode.designId).x;
+    //                 });
+
+
+    // LINES END
 
     // add listeners
     d3.selectAll(".node").on("contextmenu", function (d, i) {
@@ -131,13 +202,14 @@ function myRender(){
         (removeIndex >= 0) && globalProps.dataModel.splice(removeIndex, 1); 
         (designRemoveIndex >= 0) && globalProps.design.splice(designRemoveIndex, 1); 
 
-        // remove the proper dom elements :
+        // re-update dom & remove the proper dom elements :
         myRender();
     });
     d3.select("svg").on("click",containerClicked );
     d3.selectAll(".node").on("click", function(d,i){
         nodeClicked(d,i);
     });
+
 
 
 

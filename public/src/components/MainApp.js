@@ -15,6 +15,7 @@ export default class MainApp extends React.Component{
 
         this.myProps = {
             counter : 3,
+            linksCounter: 1,
 
             dataModel:[
                 {
@@ -40,7 +41,9 @@ export default class MainApp extends React.Component{
                     label:'is aware of',
                     from:'node1',   // source node id
                     to:'node2',     // target node id
-                    linkType: 'arrow'
+                    linkType: 'arrow',
+                    id:0,
+                    designId:0
                 }
             ],
 
@@ -60,9 +63,10 @@ export default class MainApp extends React.Component{
                     id:1,
                     style:{
                         color:"red",
-                        shape:"triangle",
+                        shape:"circle",
                         x0:400,
-                        y0:80
+                        y0:80,
+                        radius:30
                     }
                     
                 },
@@ -70,11 +74,16 @@ export default class MainApp extends React.Component{
                     id:2,
                     style:{
                         color:"blue",
-                        shape:"square",
+                        shape:"circle",
                         x0:50,
-                        y0:50
+                        y0:50,
+                        radius:30
                     }
                 }
+            ],
+
+            designRelations:[
+                
             ],
 
             updatedNode:undefined
@@ -111,11 +120,11 @@ export default class MainApp extends React.Component{
                 </div>  
             </div>
         );
-        // return(
-        //     <div style={{ height: '800px', width:'1600px' }}>
-        //         <Trial />
-        //     </div>
-        // );
+            // return(
+            //     <div style={{ height: '800px', width:'1600px' }}>
+            //         <Trial />
+            //     </div>
+            // );
     }
 
     dataBind(newData){
