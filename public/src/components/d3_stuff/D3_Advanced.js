@@ -359,18 +359,18 @@ export default class D3 extends React.Component{
 
     componentDidMount(){
         globalProps = JSON.parse(JSON.stringify( this.myProps ));
-
         myRender();
     }
 
     componentWillUnmount(){
         // remove listeners by :
-        d3.select("#container-div").on("click", null );        
+        d3.select("#container-div").on("click", null );  
     }
 
     componentWillReceiveProps(nextProps) {
 
-        globalProps = JSON.parse(JSON.stringify( nextProps.myProps ));
+        // globalProps = JSON.parse(JSON.stringify( nextProps.myProps ));
+
         let newNode = nextProps.myProps.updatedNode;
         if(newNode){
             // newNode is not undefined , update the dataModel 
