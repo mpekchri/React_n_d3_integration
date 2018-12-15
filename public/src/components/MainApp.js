@@ -248,16 +248,18 @@ export default class MainApp extends React.Component{
 
     // PALETTE EVENT HANDLERS FOR CHILDREN
     paletteAddNodeIsAllowed(){
-        let result = this.state.paletteEvents.addNode;
-        this.setState((prevState)=>{
-            return{
-                paletteEvents:{
-                    ...prevState.paletteEvents,
-                    addNode:false
+        let mayAddNode = this.state.paletteEvents.addNode;
+        if(mayAddNode){
+            this.setState((prevState)=>{
+                return{
+                    paletteEvents:{
+                        ...prevState.paletteEvents,
+                        addNode:false
+                    }
                 }
-            }
-        });
-        return result;
+            });
+        }
+        return mayAddNode;
     }
 
     paletteAddLineIsAllowed(){

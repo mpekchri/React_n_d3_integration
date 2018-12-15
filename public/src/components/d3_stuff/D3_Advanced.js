@@ -74,6 +74,7 @@ function myRender(){
     links.exit().remove();
     // ADD LINES based on data (globalProps.relationshipsModel) -- SECTION END --
 
+
     // ADD LISTENERS -- SECTION START -- 
     nodeDeleteListener();
     nodeAddListener();
@@ -112,6 +113,7 @@ export default class D3 extends React.Component{
         globalProps = JSON.parse(JSON.stringify( this.props.myProps ));
         mayAddNode = this.props.mayAddNode;
         mayAddLine = this.props.mayAddLine;
+        console.log('initial props')
         myRender();
     }
 
@@ -126,7 +128,7 @@ export default class D3 extends React.Component{
     componentWillReceiveProps(nextProps) {
         // update data based on new props
         globalProps = JSON.parse(JSON.stringify( nextProps.myProps ));
-        
+        console.log('new props')
 
         let newNode = nextProps.myProps.updatedNode;
         if(newNode){
@@ -297,7 +299,8 @@ function dragged(d) {
 }
   
 function dragended(d) {
-    d3.select(this).style("cursor", "default"); 
+    dataUpdated(globalProps);
+    d3.select(this).style("cursor", "default");     
     d3.select(this).classed("active", false);
 }
 // ---- DRAGG - SECTION END ----
