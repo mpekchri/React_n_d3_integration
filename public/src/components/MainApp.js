@@ -2,7 +2,8 @@ import React from 'react';
 // import Graph from './Graph';
 // import D3 from './D3';
 import D3Advanced from './d3_stuff/D3_Advanced';
-import Trial from './d3_stuff/Trials';
+// import Trial from './d3_stuff/Trials';
+import Palette from './Palette';
 
 export default class MainApp extends React.Component{
     constructor(props){
@@ -91,33 +92,43 @@ export default class MainApp extends React.Component{
 
         this.state = {
             visible:false,
-            selectedNode:undefined
+            selectedNode:undefined,
+
+            paletteEvents:{
+                addNode:false,
+                addLine:false
+            },
         }
 
     }
 
     render(){
         return(
-            <div style={{ height: '800px', width:'1600px' }}>
-                <D3Advanced myProps={this.myProps} 
-                dataUpdated={this.dataBind}
-                nodeClicked={this.nodeClicked}
-            />
-                <div style={{ height: '300px', width:'1600px', border:'dashed',visibility: this.state.visible ? 'visible':'hidden' }}>
-                    { 
-                    this.state.visible ? 
-                        <form onSubmit={this.handleSubmit}>
-                        <label>
-                            Node name:<input type="text" value={ this.state.selectedNode.newName } onChange={this.changeNodeName}/>
-                            </label>                            
-                            <button onClick={this.resetNodeName}>Reset</button>
+            <div className="mainContainer">
+                <div style={{ height: '800px', width:'1400px' }}>
+                    <D3Advanced myProps={this.myProps} 
+                    dataUpdated={this.dataBind}
+                    nodeClicked={this.nodeClicked}
+                />
+                    <div style={{ height: '300px', width:'1400px', border:'dashed',visibility: this.state.visible ? 'visible':'hidden' }}>
+                        { 
+                        this.state.visible ? 
+                            <form onSubmit={this.handleSubmit}>
+                            <label>
+                                Node name:<input type="text" value={ this.state.selectedNode.newName } onChange={this.changeNodeName}/>
+                                </label>                            
+                                <button onClick={this.resetNodeName}>Reset</button>
 
-                            <hr/>
-                            <input type="submit" value="Submit and Close" />
-                        </form>
-                        : undefined
-                    }
-                </div>  
+                                <hr/>
+                                <input type="submit" value="Submit and Close" />
+                            </form>
+                            : undefined
+                        }
+                    </div>
+                </div>
+                <div style={{ height: '300px', width:'400px', border:'dashed'}}>
+                    <Palette />
+                </div>
             </div>
         );
             // return(
@@ -201,6 +212,28 @@ export default class MainApp extends React.Component{
             };
         })
         // console.log('node '+d.name + ' clicked');
+    }
+
+    paletteAddNode(){
+        this.setState(()=>{
+            return{
+                paletteEvents:{
+                    addNode:true,
+                    addLine:false
+                }
+            };
+        })
+    }
+
+    paletteAddLine(){
+        this.setState(()=>{
+            return{
+                paletteEvents:{
+                    addNode:false,
+                    addLine:true
+                }
+            };
+        })
     }
 
 }

@@ -4,3 +4,9 @@
     // border: solid black 1px; 
     // text-align: center;
 }
+
+.mainContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
