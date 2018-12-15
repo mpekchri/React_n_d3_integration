@@ -9,19 +9,19 @@ export default class Palette extends React.Component{
 
     render(){
         return(
-            <div style={{ height: '100%', width:'100%',display:'flex','flex-direction':'column' }}>
-                <button>Add node</button>
-                <button>Add line</button>
+            <div style={{ height: '100%', width:'100%',display:'flex',flexDirection:'column' }}>
+                <button onClick={this.addNodeClicked}>Add node</button>
+                <button onClick={this.addLineClicked}>Add line</button>
             </div>
         );
     }
 
     addNodeClicked(){
-        
+        this.props.paletteAddNode();
     }
 
     addLineClicked(){
-        
+        this.props.paletteAddLine();
     }
 
 }

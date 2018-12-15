@@ -4,6 +4,8 @@ import * as d3 from "d3";
 var globalProps;
 var dataUpdated;
 var nodeClicked;
+var mayAddNode;
+var mayAddLine;
 
 // DATA HANDLE
 function myRender(){
@@ -90,7 +92,7 @@ export default class D3 extends React.Component{
 
     constructor(props){
         super(props);
-        this.myProps = props.myProps;
+        // this.myProps = props.myProps;
         dataUpdated = props.dataUpdated;
         nodeClicked = props.nodeClicked;
     }
@@ -107,7 +109,9 @@ export default class D3 extends React.Component{
     }
 
     componentDidMount(){
-        globalProps = JSON.parse(JSON.stringify( this.myProps ));
+        globalProps = JSON.parse(JSON.stringify( this.props.myProps ));
+        mayAddNode = this.props.mayAddNode;
+        mayAddLine = this.props.mayAddLine;
         myRender();
     }
 
@@ -122,6 +126,7 @@ export default class D3 extends React.Component{
     componentWillReceiveProps(nextProps) {
         // update data based on new props
         globalProps = JSON.parse(JSON.stringify( nextProps.myProps ));
+        
 
         let newNode = nextProps.myProps.updatedNode;
         if(newNode){
@@ -189,27 +194,29 @@ function nodeAddListener(){
     // The coordinates of the new node will be taken
     // as input from mouse coordinates
     d3.select("svg").on("click", function(){
-        let inputCoordinates = d3.mouse(this);
-        let newNodeId = globalProps.counter + 1;
-        globalProps.counter = globalProps.counter + 1;
+        if(mayAddNode()){
+            let inputCoordinates = d3.mouse(this);
+            let newNodeId = globalProps.counter + 1;
+            globalProps.counter = globalProps.counter + 1;
 
-        // update data : 
-        globalProps.design.push({
-            id:newNodeId,
-            style:{
-                color:"yellow",
-                shape:"circle",
-                x0:inputCoordinates[0],
-                y0:inputCoordinates[1],
-                radius:40
-            }
-        })
-        globalProps.dataModel.push({
-            id:"node"+newNodeId,
-            designId:newNodeId,
-            name:"node "+newNodeId
-        });
-        myRender();
+            // update data : 
+            globalProps.design.push({
+                id:newNodeId,
+                style:{
+                    color:"yellow",
+                    shape:"circle",
+                    x0:inputCoordinates[0],
+                    y0:inputCoordinates[1],
+                    radius:40
+                }
+            })
+            globalProps.dataModel.push({
+                id:"node"+newNodeId,
+                designId:newNodeId,
+                name:"node "+newNodeId
+            });
+            myRender();
+        }
     } );
 }
 

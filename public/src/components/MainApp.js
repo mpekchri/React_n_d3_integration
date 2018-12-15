@@ -14,6 +14,13 @@ export default class MainApp extends React.Component{
         this.resetNodeName = this.resetNodeName.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
+        // palette event handlers
+        this.paletteAddNode = this.paletteAddNode.bind(this);
+        this.paletteAddLine = this.paletteAddLine.bind(this);
+        // palette event handlers for children
+        this.paletteAddNodeIsAllowed = this.paletteAddNodeIsAllowed.bind(this);
+        this.paletteAddLineIsAllowed = this.paletteAddLineIsAllowed.bind(this);
+
         this.myProps = {
             counter : 3,
             linksCounter: 0,
@@ -109,6 +116,8 @@ export default class MainApp extends React.Component{
                     <D3Advanced myProps={this.myProps} 
                     dataUpdated={this.dataBind}
                     nodeClicked={this.nodeClicked}
+                    mayAddNode={this.paletteAddNodeIsAllowed}
+                    mayAddLine={this.paletteAddLineIsAllowed}
                 />
                     <div style={{ height: '300px', width:'1400px', border:'dashed',visibility: this.state.visible ? 'visible':'hidden' }}>
                         { 
@@ -127,7 +136,10 @@ export default class MainApp extends React.Component{
                     </div>
                 </div>
                 <div style={{ height: '300px', width:'400px', border:'dashed'}}>
-                    <Palette />
+                    <Palette 
+                        paletteAddNode={this.paletteAddNode}
+                        paletteAddLine={this.paletteAddLine}
+                    />
                 </div>
             </div>
         );
@@ -175,9 +187,7 @@ export default class MainApp extends React.Component{
         this.setState((prevState)=>{
             return{
                 selectedNode: {
-                    id:prevState.selectedNode.id,
-                    designId:prevState.selectedNode.designId,
-                    name:prevState.selectedNode.name,
+                    ...prevState.selectedNode,
                     newName:newName
                 }
             }
@@ -190,9 +200,7 @@ export default class MainApp extends React.Component{
         this.setState((prevState)=>{
             return{
                 selectedNode: {
-                    id:prevState.selectedNode.id,
-                    designId:prevState.selectedNode.designId,
-                    name:prevState.selectedNode.name,
+                    ...prevState.selectedNode,
                     newName:prevState.selectedNode.name
                 }
             }
@@ -214,26 +222,55 @@ export default class MainApp extends React.Component{
         // console.log('node '+d.name + ' clicked');
     }
 
+
+    // PALETTE EVENTS
     paletteAddNode(){
         this.setState((prevState)=>{
             return{
                 paletteEvents:{
-                    ...prevState.paletteEvents,
-                    addNode:true
+                    addNode:true,
+                    addLine:false
                 }
             };
-        })
+        });
     }
 
     paletteAddLine(){
         this.setState((prevState)=>{
             return{
                 paletteEvents:{
-                    ...prevState.paletteEvents,
+                    addNode:false,
                     addLine:true
                 }
             };
-        })
+        });
+    }
+
+    // PALETTE EVENT HANDLERS FOR CHILDREN
+    paletteAddNodeIsAllowed(){
+        let result = this.state.paletteEvents.addNode;
+        this.setState((prevState)=>{
+            return{
+                paletteEvents:{
+                    ...prevState.paletteEvents,
+                    addNode:false
+                }
+            }
+        });
+        return result;
+    }
+
+    paletteAddLineIsAllowed(){
+        let result = this.state.paletteEvents.addLine;
+        this.setState((prevState)=>{
+            return{
+                paletteEvents:{
+                    ...prevState.paletteEvents,
+                    addLine:false
+                }
+            }
+        });
+        return result;
     }
 
 }
