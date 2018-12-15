@@ -113,7 +113,10 @@ export default class D3 extends React.Component{
 
     componentWillUnmount(){
         // remove listeners :
-        d3.select("#container-div").on("click", null );  
+        d3.selectAll(".node").on("contextmenu", null);
+        d3.select("svg").on("click", null);
+        d3.selectAll(".node").on("click", null);        
+        d3.selectAll(".node").on('mousedown.drag', null);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -215,6 +218,9 @@ function nodeSelectListener(){
     // call nodeClicked() function (passed in props, from parent element)
     // so parent component may handle the event properly
     d3.selectAll(".node").on("click", function(d,i){
+        // update data in parent component !! VERY IMPORTAND - do this before you call any listener of parent component
+        dataUpdated(globalProps);
+        // then call the listener on data component
         nodeClicked(d,i);
     });
 }
