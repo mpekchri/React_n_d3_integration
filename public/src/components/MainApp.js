@@ -215,21 +215,21 @@ export default class MainApp extends React.Component{
     }
 
     paletteAddNode(){
-        this.setState(()=>{
+        this.setState((prevState)=>{
             return{
                 paletteEvents:{
-                    addNode:true,
-                    addLine:false
+                    ...prevState.paletteEvents,
+                    addNode:true
                 }
             };
         })
     }
 
     paletteAddLine(){
-        this.setState(()=>{
+        this.setState((prevState)=>{
             return{
                 paletteEvents:{
-                    addNode:false,
+                    ...prevState.paletteEvents,
                     addLine:true
                 }
             };

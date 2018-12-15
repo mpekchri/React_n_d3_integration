@@ -17,7 +17,7 @@ export default class Palette extends React.Component{
     }
 
     addNodeClicked(){
-
+        
     }
 
     addLineClicked(){
