@@ -153,7 +153,7 @@ export default class MainApp extends React.Component{
     dataBind(newData){
         // copy new data : 
         this.myProps = JSON.parse(JSON.stringify(newData));
-        // console.log(this.myProps);
+        // console.log("Parent -- dataBind(), DATA : ");
     }
 
     handleSubmit(e){
@@ -248,6 +248,7 @@ export default class MainApp extends React.Component{
 
     // PALETTE EVENT HANDLERS FOR CHILDREN
     paletteAddNodeIsAllowed(){
+        // console.log("Parent -- paletteAddNodeIsAllowed()");
         let mayAddNode = this.state.paletteEvents.addNode;
         if(mayAddNode){
             this.setState((prevState)=>{
@@ -262,17 +263,20 @@ export default class MainApp extends React.Component{
         return mayAddNode;
     }
 
-    paletteAddLineIsAllowed(){
-        let result = this.state.paletteEvents.addLine;
-        this.setState((prevState)=>{
-            return{
-                paletteEvents:{
-                    ...prevState.paletteEvents,
-                    addLine:false
+    paletteAddLineIsAllowed(addLineDisable){
+        // console.log("Parent -- paletteAddLineIsAllowed()");
+        let mayAddLine = this.state.paletteEvents.addLine;
+        if(addLineDisable){
+            this.setState((prevState)=>{
+                return{
+                    paletteEvents:{
+                        ...prevState.paletteEvents,
+                        addLine:false
+                    }
                 }
-            }
-        });
-        return result;
+            });
+        }
+        return mayAddLine;
     }
 
 }
