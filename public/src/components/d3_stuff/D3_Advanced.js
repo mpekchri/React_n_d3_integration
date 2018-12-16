@@ -261,6 +261,8 @@ function nodeSelectListener(){
     d3.selectAll(".node").on("click", function(d,i){
         
         if(sourceNodeDefined){
+            // !!! LINES FROM AND TO same node ARE NOT SUPPORTED !!!
+        
             // dataUpdated(globalProps);
             let flag = mayAddLine(true);
             if(flag){
